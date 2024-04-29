@@ -1,5 +1,6 @@
 package com.example.pressbutton
 
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
@@ -7,10 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController
 import com.example.pressbutton.databinding.FragmentFirstBinding
-import java.util.TimerTask
-import kotlin.concurrent.timer
+import java.util.Date
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -33,8 +33,11 @@ class FirstFragment : Fragment() {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         timer = object: CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                tm++
-                addText(binding.textviewFirst, tm.toString())
+                val sdf = SimpleDateFormat("\nyyyy-M-dd'T'hh:mm:ss'Z'\n".plus(tm.toString()))
+                val currentDate = sdf.format(Date())
+                addText(binding.textviewFirst, currentDate)
+                //tm++
+                //addText(binding.textviewFirst, tm.toString())
             }
 
             override fun onFinish() {
@@ -58,7 +61,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnStart.setOnClickListener {
-            addText(binding.textviewFirst,"\nStart")
+            addText(binding.textviewFirst,"\nStart\n")
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             // Добавить код: создать файл, а если нет директории - создать директорию.
             // Запустить фоновый процесс или "подписаться на циклическое событие по времени
