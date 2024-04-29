@@ -21,6 +21,32 @@ class FirstFragment : Fragment() {
     private lateinit var timer: CountDownTimer
     private var tm: Int = 0
 
+    private fun currDtStr(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
+        return sdf.format(Date())
+    }
+    private fun createHeader(trackName: String = "My New Track"): String {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<gpx creator=\"StravaGPX Android\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\">\n" +
+                " <metadata>\n" +
+                "  <time>" + currDtStr() + "</time>\n" +
+                " </metadata>\n" +
+                " <trk>\n" +
+                "  <name>" + trackName + "</name>\n" +
+                "  <trkseg>\n"
+    }
+
+    private fun addEnding() : String{
+        return "        </trkseg>\n        </trk>\n        </gpx>"
+    }
+
+    private fun addPoint(): String {
+        return "   <trkpt lat=\"55.7094680\" lon=\"37.5574220\">\n" +
+                "    <ele>139.5</ele>\n" +
+                "    <time>" + currDtStr() + "</time>\n" +
+                "   </trkpt>\n"
+    }
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -33,15 +59,13 @@ class FirstFragment : Fragment() {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         timer = object: CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                val sdf = SimpleDateFormat("\nyyyy-M-dd'T'hh:mm:ss'Z'\n".plus(tm.toString()))
-                val currentDate = sdf.format(Date())
-                addText(binding.textviewFirst, currentDate)
+                addText(binding.textviewFirst, addPoint())
                 //tm++
                 //addText(binding.textviewFirst, tm.toString())
             }
 
             override fun onFinish() {
-                addText(binding.textviewFirst,"Ura")
+                addText(binding.textviewFirst,addEnding())
             }
         }
         return binding.root
@@ -61,7 +85,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnStart.setOnClickListener {
-            addText(binding.textviewFirst,"\nStart\n")
+            addText(binding.textviewFirst, createHeader())
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             // Добавить код: создать файл, а если нет директории - создать директорию.
             // Запустить фоновый процесс или "подписаться на циклическое событие по времени
