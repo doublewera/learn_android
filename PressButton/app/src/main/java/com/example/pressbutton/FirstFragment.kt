@@ -99,17 +99,19 @@ class FirstFragment : Fragment() {
         myViewModel = (activity as MainActivity).myViewModel
         binding.btnStart.setOnClickListener {
             if (myViewModel.running) {
+                myViewModel.running = false
                 addText(binding.textviewFirst, addEnding())
+                myViewModel.data = binding.textviewFirst.text.toString()
                 // Добавить код: создать файл, а если нет директории - создать директорию.
                 // ЕСЛИ уже идёт фоновый процесс, "отписаться от циклического события", либо "остановить фоновый"
                 //                                поменять на кнопке надпись на "продолжить" или "начать"
                 //timer.stop()
+                // Заменить надпись на кнопке на Stop, чтобы повторное нажатие перезапускало треккинг координат
                 binding.btnStart.text = "Start"
-                myViewModel.running = false
             } else {
                 myViewModel.running = true
                 binding.textviewFirst.text = ""
-                // Заменить надпись на кнопке на Stop, чтобы повторное нажатие приостанавливало треккинг координат
+                // Заменить надпись на кнопке на Start, чтобы повторное нажатие приостанавливало треккинг координат
                 binding.btnStart.text = "Stop"
                 addText(binding.textviewFirst, createHeader())
                 // Запустить фоновый процесс или "подписаться на циклическое событие по времени

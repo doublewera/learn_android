@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 class ItemViewModel : ViewModel() {
     //private val mutableSelectedItem = MutableLiveData<Item>()
     //val selectedItem: LiveData<Item> get() = mutableSelectedItem
+    var data = ""
     var myLocation: Location? = Location("")
     var locationIsSet = false
     var running = false
