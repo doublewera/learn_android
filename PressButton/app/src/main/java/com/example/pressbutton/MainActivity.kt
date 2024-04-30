@@ -30,17 +30,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val myViewModel: ItemViewModel by viewModels()
-    private var requestingLocationUpdates = false
     private val locationRequest = LocationRequest.Builder(1000).build()
     private lateinit var locationCallback: LocationCallback
-    private val cancellationTokenSource = CancellationTokenSource()
 
-    //private fun createLocationRequest() {
-    //    val locationRequest = LocationRequest.Builder(1000).build()
-    //}
-    //public fun getMyLocation() {
-    //    return fusedLocationClient.getCurrentLocation(locationRequest, cancellationTokenSource.token)
-    //}
     private fun initLocationCatcher() {
 
         if (ActivityCompat.checkSelfPermission(
@@ -93,7 +85,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val locationPermissionRequest = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                 when {

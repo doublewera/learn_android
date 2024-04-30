@@ -13,7 +13,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import java.util.Date
-
+import java.io.File
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -24,6 +24,10 @@ class FirstFragment : Fragment() {
     private lateinit var timer: CountDownTimer
     private lateinit var myViewModel: ItemViewModel
 
+    private fun fileNameDt(): String {
+        val sdf = SimpleDateFormat("yyyyMMddhhmmss'.gpx'")
+        return sdf.format(Date())
+    }
     private fun currDtStr(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
         return sdf.format(Date())
@@ -89,11 +93,6 @@ class FirstFragment : Fragment() {
         cmpnnt.text = cmpnnt.text.toString().plus(txt)
     }
 
-    //private fun addText(cmpnnt: TextView, txt: String): TimerTask.() -> Unit {
-    //    return  {
-    //        cmpnnt.text = cmpnnt.text.toString().plus(txt)
-    //    }
-    //}
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         myViewModel = (activity as MainActivity).myViewModel
@@ -102,10 +101,11 @@ class FirstFragment : Fragment() {
                 myViewModel.running = false
                 addText(binding.textviewFirst, addEnding())
                 myViewModel.data = binding.textviewFirst.text.toString()
+
                 // Добавить код: создать файл, а если нет директории - создать директорию.
+                File(context?.getExternalFilesDir(null), fileNameDt()).writeText(myViewModel.data)
                 // ЕСЛИ уже идёт фоновый процесс, "отписаться от циклического события", либо "остановить фоновый"
                 //                                поменять на кнопке надпись на "продолжить" или "начать"
-                //timer.stop()
                 // Заменить надпись на кнопке на Stop, чтобы повторное нажатие перезапускало треккинг координат
                 binding.btnStart.text = "Start"
             } else {
