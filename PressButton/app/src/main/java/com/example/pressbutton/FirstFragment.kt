@@ -23,7 +23,6 @@ class FirstFragment : Fragment() {
     private var _binding: FragmentFirstBinding? = null
     private lateinit var timer: CountDownTimer
     private lateinit var myViewModel: ItemViewModel
-    private var running = false
 
     private fun currDtStr(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
@@ -77,7 +76,7 @@ class FirstFragment : Fragment() {
             }
 
             override fun onFinish() {
-                if(running) {
+                if(myViewModel.running) {
                     this.start()
                 }
             }
@@ -99,16 +98,16 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         myViewModel = (activity as MainActivity).myViewModel
         binding.btnStart.setOnClickListener {
-            if (running) {
+            if (myViewModel.running) {
                 addText(binding.textviewFirst, addEnding())
                 // Добавить код: создать файл, а если нет директории - создать директорию.
                 // ЕСЛИ уже идёт фоновый процесс, "отписаться от циклического события", либо "остановить фоновый"
                 //                                поменять на кнопке надпись на "продолжить" или "начать"
                 //timer.stop()
                 binding.btnStart.text = "Start"
-                running = false
+                myViewModel.running = false
             } else {
-                running = true
+                myViewModel.running = true
                 binding.textviewFirst.text = ""
                 // Заменить надпись на кнопке на Stop, чтобы повторное нажатие приостанавливало треккинг координат
                 binding.btnStart.text = "Stop"

@@ -10,6 +10,7 @@ class ItemViewModel : ViewModel() {
     //val selectedItem: LiveData<Item> get() = mutableSelectedItem
     var myLocation: Location? = Location("")
     var locationIsSet = false
+    var running = false
     /*fun selectItem(item: Item) {
         mutableSelectedItem.value = item
     }*/

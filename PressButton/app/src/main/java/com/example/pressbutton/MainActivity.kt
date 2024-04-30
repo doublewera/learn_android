@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,7 +17,9 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.example.pressbutton.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 
@@ -26,7 +29,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val myViewModel: ItemViewModel by viewModels()
+    private var requestingLocationUpdates = false
     private val locationRequest = LocationRequest.Builder(1000).build()
+    private lateinit var locationCallback: LocationCallback
     private val cancellationTokenSource = CancellationTokenSource()
 
     //private fun createLocationRequest() {
@@ -66,6 +71,21 @@ class MainActivity : AppCompatActivity() {
                     myViewModel.locationIsSet = true
                 }
             }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                p0?: return
+                for (location in p0.locations){
+                    if (location != null) {
+                        myViewModel.myLocation = location
+                        myViewModel.locationIsSet = true
+                    }
+                }
+            }
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -221,4 +241,15 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+    /*override fun onResume() {
+        super.onResume()
+        if (myViewModel.running) startLocationUpdates()
+    }
+
+    private fun startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
+    }*/
 }
