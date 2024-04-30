@@ -23,6 +23,7 @@ class FirstFragment : Fragment() {
     private var _binding: FragmentFirstBinding? = null
     private lateinit var timer: CountDownTimer
     private lateinit var myViewModel: ItemViewModel
+    private var running = false
 
     private fun currDtStr(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
@@ -70,13 +71,15 @@ class FirstFragment : Fragment() {
     ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        timer = object: CountDownTimer(20000, 1000) {
+        timer = object: CountDownTimer(1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 addText(binding.textviewFirst, addPoint())
             }
 
             override fun onFinish() {
-                addText(binding.textviewFirst,addEnding())
+                if(running) {
+                    this.start()
+                }
             }
         }
         return binding.root
@@ -96,18 +99,23 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         myViewModel = (activity as MainActivity).myViewModel
         binding.btnStart.setOnClickListener {
-            binding.textviewFirst.text = ""
-            addText(binding.textviewFirst, createHeader())
-            //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-            // Добавить код: создать файл, а если нет директории - создать директорию.
-            // Запустить фоновый процесс или "подписаться на циклическое событие по времени
-            timer.start()
-            //timer(initialDelay = 1000L, period = 1000L ,
-            //    action = addText(binding.textviewFirst, "Kuku")
-            //)
-            // Заменить надпись на кнопке на Pause, чтобы повторное нажатие приостанавливало треккинг координат
-            // ЕСЛИ уже идёт фоновый процесс, "отписаться от циклического события", либо "остановить фоновый"
-            //                                поменять на кнопке надпись на "продолжить" или "начать"
+            if (running) {
+                addText(binding.textviewFirst, addEnding())
+                // Добавить код: создать файл, а если нет директории - создать директорию.
+                // ЕСЛИ уже идёт фоновый процесс, "отписаться от циклического события", либо "остановить фоновый"
+                //                                поменять на кнопке надпись на "продолжить" или "начать"
+                //timer.stop()
+                binding.btnStart.text = "Start"
+                running = false
+            } else {
+                running = true
+                binding.textviewFirst.text = ""
+                // Заменить надпись на кнопке на Stop, чтобы повторное нажатие приостанавливало треккинг координат
+                binding.btnStart.text = "Stop"
+                addText(binding.textviewFirst, createHeader())
+                // Запустить фоновый процесс или "подписаться на циклическое событие по времени
+                timer.start()
+            }
         }
     }
 
