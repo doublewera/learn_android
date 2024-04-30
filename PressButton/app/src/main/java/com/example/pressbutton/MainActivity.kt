@@ -4,19 +4,69 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.example.pressbutton.databinding.ActivityMainBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationTokenSource
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    val myViewModel: ItemViewModel by viewModels()
+    private val locationRequest = LocationRequest.Builder(1000).build()
+    private val cancellationTokenSource = CancellationTokenSource()
 
+    //private fun createLocationRequest() {
+    //    val locationRequest = LocationRequest.Builder(1000).build()
+    //}
+    //public fun getMyLocation() {
+    //    return fusedLocationClient.getCurrentLocation(locationRequest, cancellationTokenSource.token)
+    //}
+    private fun initLocationCatcher() {
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //return@registerForActivityResult
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                // Got last known location. In some rare situations this can be null.
+                myViewModel.myLocation = location
+                if (location != null) {
+                    myViewModel.locationIsSet = true
+                }
+            }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,9 +78,108 @@ class MainActivity : AppCompatActivity() {
                 when {
                     permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                         // Precise location access granted.
+                        initLocationCatcher()
+                        /* fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                        if (ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return@registerForActivityResult
+                        }
+                        fusedLocationClient.lastLocation
+                            .addOnSuccessListener { location : Location? ->
+                                // Got last known location. In some rare situations this can be null.
+                                myViewModel.myLocation = location
+                                if (location != null) {
+                                    myViewModel.locationIsSet = true
+                                }
+                            }
+
+                         */
+                    }
+                    permissions.getOrDefault(Manifest.permission.ACCESS_BACKGROUND_LOCATION, false) -> {
+                        // Background location access granted.
+                        initLocationCatcher()
+                        /* fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                        if (ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return@registerForActivityResult
+                        }
+                        fusedLocationClient.lastLocation
+                            .addOnSuccessListener { location : Location? ->
+                                // Got last known location. In some rare situations this can be null.
+                                myViewModel.myLocation = location
+                                if (location != null) {
+                                    myViewModel.locationIsSet = true
+                                }
+                            }
+
+                         */
                     }
                     permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                         // Only approximate location access granted.
+                            initLocationCatcher()
+                        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                        if (ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return@registerForActivityResult
+                        }
+                        fusedLocationClient.lastLocation
+                            .addOnSuccessListener { location : Location? ->
+                                // Got last known location. In some rare situations this can be null.
+                                myViewModel.myLocation = location
+                                if (location != null) {
+                                    myViewModel.locationIsSet = true
+                                }
+                            }
+
+                         */
                     } else -> {
                         // No location access granted.
                     }
@@ -42,6 +191,7 @@ class MainActivity : AppCompatActivity() {
         // rationale dialog. For more details, see Request permissions.
         locationPermissionRequest.launch(arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION))
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

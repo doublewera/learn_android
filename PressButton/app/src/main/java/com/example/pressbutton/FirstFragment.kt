@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.pressbutton.databinding.FragmentFirstBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import java.util.Date
 
 
@@ -19,7 +22,7 @@ class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
     private lateinit var timer: CountDownTimer
-    private var tm: Int = 0
+    private lateinit var myViewModel: ItemViewModel
 
     private fun currDtStr(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
@@ -41,8 +44,18 @@ class FirstFragment : Fragment() {
     }
 
     private fun addPoint(): String {
-        return "   <trkpt lat=\"55.7094680\" lon=\"37.5574220\">\n" +
-                "    <ele>139.5</ele>\n" +
+        var lat: Double? = 55.555555
+        var lon: Double? = 37.777777
+        var alt: Double? = 139.99999
+        if (myViewModel.locationIsSet) {
+            if (myViewModel.myLocation != null) {
+                lat = myViewModel.myLocation?.latitude
+                lon = myViewModel.myLocation?.longitude
+                alt = myViewModel.myLocation?.altitude
+            }
+        }
+        return "   <trkpt lat=\"" + lat.toString() + "\" lon=\"" + lon.toString() + "\">\n" +
+                "    <ele>" + alt.toString() + "</ele>\n" +
                 "    <time>" + currDtStr() + "</time>\n" +
                 "   </trkpt>\n"
     }
@@ -60,8 +73,6 @@ class FirstFragment : Fragment() {
         timer = object: CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 addText(binding.textviewFirst, addPoint())
-                //tm++
-                //addText(binding.textviewFirst, tm.toString())
             }
 
             override fun onFinish() {
@@ -83,8 +94,9 @@ class FirstFragment : Fragment() {
     //}
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        myViewModel = (activity as MainActivity).myViewModel
         binding.btnStart.setOnClickListener {
+            binding.textviewFirst.text = ""
             addText(binding.textviewFirst, createHeader())
             //findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             // Добавить код: создать файл, а если нет директории - создать директорию.
