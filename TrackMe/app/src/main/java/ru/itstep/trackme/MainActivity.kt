@@ -1,4 +1,4 @@
-package com.example.pressbutton
+package com.example.trackme
 
 import android.os.Bundle
 import android.view.Menu
@@ -15,14 +15,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import com.google.android.material.snackbar.Snackbar
-import com.example.pressbutton.databinding.ActivityMainBinding
+import com.example.trackme.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.CancellationTokenSource
 
 class MainActivity : AppCompatActivity() {
 

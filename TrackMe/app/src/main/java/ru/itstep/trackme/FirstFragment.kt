@@ -1,4 +1,4 @@
-package com.example.pressbutton
+package com.example.trackme
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.pressbutton.databinding.FragmentFirstBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.example.trackme.databinding.FragmentFirstBinding
 import java.util.Date
 import java.io.File
 
