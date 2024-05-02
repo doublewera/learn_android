@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         return "   <trkpt lat=\"" + loc.latitude.toString() + "\" lon=\"" + loc.longitude.toString() + "\">\n" +
                 "    <ele>" + loc.altitude.toString() + "</ele>\n" +
                 "    <time>" + currDtStr() + "</time>\n" +
-                "   </trkpt>\n"
+                "   </trkpt>"
     }
 
     private fun addText(cmpnnt: TextView, txt: String) {
@@ -116,9 +116,13 @@ class MainActivity : AppCompatActivity() {
                         if (location != null) {
                             //myViewModel.myLocation = location
                             //myViewModel.locationIsSet = true
-
+                            if (!lastpont.same(location)) {
                                 addText(tv, addPoint(location) + "\n")
+                                File(context?.getExternalFilesDir(null), "gpx/" + fileNameDt()).writeText(myViewModel.data)
                                 lastpont.myLocation = location
+                            } else {
+                                addText(tv, "mew-")
+                            }
                         }
                     }
                 }

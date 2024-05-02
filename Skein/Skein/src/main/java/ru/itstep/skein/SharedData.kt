@@ -9,5 +9,10 @@ class SharedData : ViewModel() {
     var locationIsSet = false
     var running = false
 
-
+    fun same(other: Location): Boolean {
+        // Compares properties for structural equality
+        return this.myLocation?.latitude == other.latitude &&
+                this.myLocation?.longitude == other.longitude &&
+                 this.myLocation?.altitude == other.altitude
+    }
 }
