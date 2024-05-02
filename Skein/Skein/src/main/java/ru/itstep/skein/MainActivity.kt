@@ -3,6 +3,8 @@ package ru.itstep.skein
 import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
+import android.os.Looper
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,10 +13,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private var lastpont = SharedData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +35,31 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        fusedLocationClient = turOnLocUpd()
+        fusedLocationClient = turnOnLocUpd()
     }
 
-    
-    private fun turOnLocUpd(): FusedLocationProviderClient? {
+    private fun fileNameDt(): String {
+        val sdf = SimpleDateFormat("yyyyMMddhhmmss'.gpx'")
+        return sdf.format(Date())
+    }
+
+    private fun currDtStr(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
+        return sdf.format(Date())
+    }
+
+    private fun addPoint(loc: Location): String {
+        return "   <trkpt lat=\"" + loc.latitude.toString() + "\" lon=\"" + loc.longitude.toString() + "\">\n" +
+                "    <ele>" + loc.altitude.toString() + "</ele>\n" +
+                "    <time>" + currDtStr() + "</time>\n" +
+                "   </trkpt>\n"
+    }
+
+    private fun addText(cmpnnt: TextView, txt: String) {
+        cmpnnt.text = cmpnnt.text.toString().plus(txt)
+    }
+
+    private fun turnOnLocUpd(): FusedLocationProviderClient? {
         var tv = findViewById<TextView>(R.id.stats)
         val locationPermissionRequest = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -78,6 +108,25 @@ class MainActivity : AppCompatActivity() {
                         Manifest.permission.ACCESS_BACKGROUND_LOCATION))
             }
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            locationRequest = LocationRequest.Builder(1000).build()
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(p0: LocationResult) {
+                    p0?: return
+                    for (location in p0.locations){
+                        if (location != null) {
+                            //myViewModel.myLocation = location
+                            //myViewModel.locationIsSet = true
+
+                                addText(tv, addPoint(location) + "\n")
+                                lastpont.myLocation = location
+                        }
+                    }
+                }
+            }
+            fusedLocationClient?.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper())
         }
         return fusedLocationClient
     }
