@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -118,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                             //myViewModel.locationIsSet = true
                             if (!lastpont.same(location)) {
                                 addText(tv, addPoint(location) + "\n")
-                                File(context?.getExternalFilesDir(null), "gpx/" + fileNameDt()).writeText(myViewModel.data)
+                                File(getExternalFilesDir(null), fileNameDt()).writeText(addPoint(location))
                                 lastpont.myLocation = location
                             } else {
                                 addText(tv, "mew-")
