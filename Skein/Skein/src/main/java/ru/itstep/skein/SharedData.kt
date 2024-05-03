@@ -15,7 +15,7 @@ class SharedData(context: Context) : ViewModel() {
     var h = 0.0
 
     private fun fileNameDt(): String {
-        val sdf = SimpleDateFormat("yyyyMMddhh'.gpx'")
+        val sdf = SimpleDateFormat("yyyyMMddHH'.gpx'")
         return sdf.format(Date())
     }
 
@@ -27,8 +27,38 @@ class SharedData(context: Context) : ViewModel() {
     }
 
     private fun currDtStr(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         return sdf.format(Date())
+    }
+
+    fun getStatsTxt(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val td = Date().getTime() - dtStart.getTime()
+        var seconds = td / 1000
+        var minutes = seconds / 60
+        seconds -= minutes * 60
+        var hours = minutes / 60
+        minutes -= hours * 60
+        val days = hours / 24
+        var tdstr = seconds.toString()
+        if (tdstr.length < 2) {
+            tdstr = "0" + tdstr
+        }
+        tdstr = minutes.toString() + ":" + tdstr
+        if (tdstr.length < 5) {
+            tdstr = "0" + tdstr
+        }
+        if (hours > 0) {
+            hours -= days * 24
+            tdstr = hours.toString() + ":" + tdstr
+        }
+        if (days > 0) {
+            tdstr = days.toString() + " d, " + tdstr
+        }
+        return "Start time: " + sdf.format(dtStart) + "\n" +
+                tdstr + " since that \n" +
+                "Distance: " + String.format("%.1f", km) + " km\n" +
+                "Elevation gain: " +  String.format("%.0f", h) + " m"
     }
 
     private fun gpxPoint(location: Location): String {

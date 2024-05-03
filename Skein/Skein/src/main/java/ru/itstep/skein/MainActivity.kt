@@ -18,6 +18,9 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import java.text.SimpleDateFormat
+import java.time.Period
+import java.util.Date
 
 
 class MainActivity : AppCompatActivity() {
@@ -102,10 +105,8 @@ class MainActivity : AppCompatActivity() {
                     p0?: return
                     for (location in p0.locations){
                         if (location != null) {
-                            //addText(tv, lastpoint.save(location))
                             lastpoint.change(location)
-                            putText(tv, "Distance: " + lastpoint.km + "km\n" +
-                                            "Elevation gain: " + lastpoint.h + "m")
+                            putText(tv, lastpoint.getStatsTxt())
                         }
                     }
                 }
