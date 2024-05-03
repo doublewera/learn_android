@@ -9,20 +9,17 @@ import java.io.File
 
 class SharedData(context: Context) : ViewModel() {
     val context = context
-    var data = ""
     var myLocation: Location? = null
     val dtStart = Date()
     var km = 0.0
     var h = 0.0
-    var lastFileName = ""
 
     private fun fileNameDt(): String {
-        val sdf = SimpleDateFormat("yyyyMMddhhmmss'.gpx'")
+        val sdf = SimpleDateFormat("yyyyMMddhh'.gpx'")
         return sdf.format(Date())
     }
 
     private fun Pifagor(newLocation: Location) : Double {
-        //val xyz: XYZ = XYZ(newLocation)
         if (myLocation != null) {
             return XYZ(myLocation!!).distance(XYZ(newLocation))
         }
@@ -61,7 +58,13 @@ class SharedData(context: Context) : ViewModel() {
         return "        </trkseg>\n    </trk>\n</gpx>\n"
     }
 
-    fun save(location: Location, trackName: String = "My New Track", forceNewFile: Boolean = false): String {
+    fun save(location: Location): String {
+        val result = change(location)
+        File(context.getExternalFilesDir(null), fileNameDt()).appendText(result)
+        return result
+    }
+
+    fun change(location: Location): String {
         if (same(location)) return ""
         if (myLocation != null) {
             km += Pifagor(location)
@@ -71,16 +74,9 @@ class SharedData(context: Context) : ViewModel() {
             }
         }
         myLocation = location
-        if (lastFileName == "" || forceNewFile) {
-            if (lastFileName != "") {
-                File(context.getExternalFilesDir(null), lastFileName).appendText(addEnding())
-            }
-            lastFileName = fileNameDt()
-            File(context.getExternalFilesDir(null), lastFileName).writeText(createHeader(trackName))
-        }
-        File(context.getExternalFilesDir(null), lastFileName).appendText(gpxPoint(location))
         return gpxPoint(location)
     }
+    fun change() {}
 
     private fun same(other: Location): Boolean {
         // Compares properties for structural equality

@@ -1,9 +1,11 @@
 package ru.itstep.skein
 
-import android.os.Bundle
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +18,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+
 
 class MainActivity : AppCompatActivity() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -100,7 +103,7 @@ class MainActivity : AppCompatActivity() {
                     for (location in p0.locations){
                         if (location != null) {
                             //addText(tv, lastpoint.save(location))
-                            lastpoint.save(location)
+                            lastpoint.change(location)
                             putText(tv, "Distance: " + lastpoint.km + "km\n" +
                                             "Elevation gain: " + lastpoint.h + "m")
                         }
@@ -111,6 +114,7 @@ class MainActivity : AppCompatActivity() {
                 locationRequest,
                 locationCallback,
                 Looper.getMainLooper())
+            startService(Intent(this, Bckg::class.java))
         }
         return fusedLocationClient
     }
