@@ -3,7 +3,6 @@ package ru.itstep.skein
 import android.os.Bundle
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Looper
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -17,19 +16,17 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var lastpont = SharedData()
+    private lateinit var lastpoint: SharedData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        lastpoint = SharedData(this)
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -39,21 +36,8 @@ class MainActivity : AppCompatActivity() {
         fusedLocationClient = turnOnLocUpd()
     }
 
-    private fun fileNameDt(): String {
-        val sdf = SimpleDateFormat("yyyyMMddhhmmss'.gpx'")
-        return sdf.format(Date())
-    }
-
-    private fun currDtStr(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
-        return sdf.format(Date())
-    }
-
-    private fun addPoint(loc: Location): String {
-        return "   <trkpt lat=\"" + loc.latitude.toString() + "\" lon=\"" + loc.longitude.toString() + "\">\n" +
-                "    <ele>" + loc.altitude.toString() + "</ele>\n" +
-                "    <time>" + currDtStr() + "</time>\n" +
-                "   </trkpt>"
+    private fun putText(cmpnnt: TextView, txt: String) {
+        cmpnnt.text = txt
     }
 
     private fun addText(cmpnnt: TextView, txt: String) {
@@ -115,15 +99,10 @@ class MainActivity : AppCompatActivity() {
                     p0?: return
                     for (location in p0.locations){
                         if (location != null) {
-                            //myViewModel.myLocation = location
-                            //myViewModel.locationIsSet = true
-                            if (!lastpont.same(location)) {
-                                addText(tv, addPoint(location) + "\n")
-                                File(getExternalFilesDir(null), fileNameDt()).writeText(addPoint(location))
-                                lastpont.myLocation = location
-                            } else {
-                                addText(tv, "mew-")
-                            }
+                            //addText(tv, lastpoint.save(location))
+                            lastpoint.save(location)
+                            putText(tv, "Distance: " + lastpoint.km + "km\n" +
+                                            "Elevation gain: " + lastpoint.h + "m")
                         }
                     }
                 }
