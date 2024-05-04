@@ -14,7 +14,7 @@ class SharedData(context: Context) : ViewModel() {
     var km = 0.0
     var h = 0.0
 
-    private fun fileNameDt(): String {
+    fun fileNameDt(): String {
         val sdf = SimpleDateFormat("yyyyMMddHH'.gpx'")
         return sdf.format(Date())
     }

@@ -1,9 +1,10 @@
 package ru.itstep.skein
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-
 import android.os.IBinder
 import android.os.Looper
 import androidx.annotation.Nullable
@@ -49,4 +50,19 @@ class Bckg : Service() {
             locationCallback,
             Looper.getMainLooper())
     }
+    /* private fun showRecordingNotification() {
+        val not = Notification(
+            R.drawable.icon,
+            "Координаты записываются в файл " + lastpoint.fileNameDt(),
+            System.currentTimeMillis())
+        val contentIntent = PendingIntent.getActivity(
+            this, 0, Intent(
+                this,
+                main::class.java
+            ), Notification.FLAG_ONGOING_EVENT
+        )
+        not.flags = Notification.FLAG_ONGOING_EVENT
+        not.setLatestEventInfo(this, R.string.app_name, "Application Description", contentIntent)
+        mNotificationManager.notify(1, not)
+    }*/
 }
